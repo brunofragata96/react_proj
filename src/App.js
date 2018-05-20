@@ -114,28 +114,66 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
+          {/*<img src={logo} className="App-logo" alt="logo" /> */}
+          <h1 className="App-title">Welcome to my To-Do List</h1>
         </header>
         <p className="App-intro">
-          TODO LIST
+          Add a to-do here
         </p>
 
         <form>
-        {this.state.update_state_message}
-        <input ref={(el) => {this.todo_adicionar = el}} type="text" name="todo_adicionar" onChange={this.handleInputChange} value={this.state.todo_adicionar}/>
+        
+        <input placeholder="what do you need to do?" ref={(el) => {this.todo_adicionar = el}} type="text" name="todo_adicionar" onChange={this.handleInputChange} value={this.state.todo_adicionar}/>
           <br/>
           <input type="date" id="todo_date" name="todo_date" value={this.state.todo_date} onChange={this.handleInputChange}/>
           <select name="estado_todo" onChange={this.handleInputChange} value={this.state.estado_todo}> 
-              <option value="feito"> Feito </option>
-              <option value="porFazer"> Por Fazer </option>
+              <option value="feito"> Done </option>
+              <option value="porFazer"> To Be Done </option>
             </select>
-            <br/>
-          <button onClick={this.handleSubmitForm}>Adicionar</button>
+          <button onClick={this.handleSubmitForm}>Add a To-Do</button>
         </form>
+        <p className="update_message">{this.state.update_state_message}</p>
 
-        <ul>
+        <ul className="lista_done">
+        <h2>Completed!</h2>
           {this.state.todos.map((item, index) => {
+            if (item.done === true) {
+              return <li key={"todo" + index} className={item.done ? "done" : "tbd"}> 
+                {
+                (this.state.todo_editing === index) ?
+                <input onChange={this.handleChangeTodoName.bind(this, index)} value={item.text}/>
+                :  <span className="todo_text">{item.text}</span>
+                }
+                <span className="todo_date">{item.date}</span>
+                <span className="todo_estado">{item.done}</span>
+
+                <div className="button_wrapper">
+                  <button 
+                    onClick={this.handleToggleDone.bind(this, index)}>
+                    Toggle
+                  </button>
+
+                  <button 
+                    onClick={this.handleRemove.bind(this, index)}  
+                    disabled={(!isNaN(this.state.todo_editing) && this.state.todo_editing !== null) ? "disabled" : "" }>
+                    Remover
+                  </button>
+
+                  <button 
+                    onClick={this.handleEdit.bind(this, index)}>
+                    {(this.state.todo_editing === index) ? "stop edit" : "Edit"}
+                  </button>
+                </div>
+
+              </li>
+              }
+            })}
+        </ul>
+
+         <ul className="lista_tbd">
+          <h2>To be Done...</h2>
+          {this.state.todos.map((item, index) => {
+            if (item.done === false) {
               return <li key={"todo" + index} className={item.done ? "done" : "tbd"}> 
                 {
                 (this.state.todo_editing === index) ?
@@ -144,23 +182,26 @@ class App extends Component {
                 }
                 <span>{item.date}</span>
                 <span>{item.done}</span>
-              <button 
-                onClick={this.handleToggleDone.bind(this, index)}>
-                Toggle
-              </button>
 
-              <button 
-                onClick={this.handleRemove.bind(this, index)}  
-                disabled={(!isNaN(this.state.todo_editing) && this.state.todo_editing !== null) ? "disabled" : "" }>
-                Remover
-              </button>
+                <div className="button_wrapper">
+                  <button 
+                    onClick={this.handleToggleDone.bind(this, index)}>
+                    Toggle
+                  </button>
 
-              <button 
-                onClick={this.handleEdit.bind(this, index)}>
-                {(this.state.todo_editing === index) ? "stop edit" : "Edit"}
-              </button>
+                  <button 
+                    onClick={this.handleRemove.bind(this, index)}  
+                    disabled={(!isNaN(this.state.todo_editing) && this.state.todo_editing !== null) ? "disabled" : "" }>
+                    Remove
+                  </button>
 
+                  <button 
+                    onClick={this.handleEdit.bind(this, index)}>
+                    {(this.state.todo_editing === index) ? "stop edit" : "Edit"}
+                  </button>
+                </div>
               </li>
+              }
             })}
         </ul>
 
